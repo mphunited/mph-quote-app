@@ -89,11 +89,16 @@ export const VENDORS = [
       { city: 'Waterloo',     state: 'IA' },
       { city: 'Calhoun',      state: 'GA' },
     ],
-    defaultBuyPrice: 285,
+    defaultBuyPrice: 158,
+    buyPriceByDescription: {
+      '275 Gal New IBC': 158,
+      '330 Gal New IBC': 173,
+      '135 Gal New IBC': 180,
+    },
     usesBottles: false,
     defaultBottleCost: 0,
     defaultBottleFreightRate: 0,
-    defaultDescriptions: ['275 Gal New IBC', '135 Gal New IBC', '330 Gal New IBC'],
+    defaultDescriptions: ['275 Gal New IBC', '330 Gal New IBC', '135 Gal New IBC'],
   },
   {
     id: 'united-container',

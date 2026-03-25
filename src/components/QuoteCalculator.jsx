@@ -116,6 +116,16 @@ export default function QuoteCalculator({ userProfile }) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.coreLocation])
 
+  // Auto-update buy price when description changes for vendors with per-description pricing
+  useEffect(() => {
+    if (!selectedVendor?.buyPriceByDescription || !form.ibcDescription) return
+    const price = selectedVendor.buyPriceByDescription[form.ibcDescription]
+    if (price !== undefined) {
+      setForm(prev => ({ ...prev, buyPrice: String(price) }))
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.ibcDescription])
+
   // Auto-calculate commission when ibcQty changes (for eligible users)
   useEffect(() => {
     if (!showCommission) return
