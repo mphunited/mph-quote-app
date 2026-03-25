@@ -1,0 +1,68 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Reusable component classes ─────────────────────────────────── */
+@layer components {
+
+  /* Form field label */
+  .field-label {
+    @apply block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1;
+  }
+
+  /* Text / number / select / date inputs */
+  .field-input {
+    @apply w-full rounded-lg border border-gray-300 bg-white px-3 py-2
+           text-sm text-gray-800 shadow-sm
+           focus:outline-none focus:ring-2 focus:ring-mph-navyLight focus:border-mph-navyLight
+           transition-colors duration-100;
+  }
+
+  /* Primary navy button */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2
+           bg-mph-navy hover:bg-mph-navyDark text-white
+           font-semibold text-sm py-2.5 px-5 rounded-lg
+           transition-colors duration-150
+           focus:outline-none focus:ring-2 focus:ring-mph-amber focus:ring-offset-2;
+  }
+
+  /* Secondary / outline button */
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2
+           bg-mph-amber hover:bg-mph-amberLight text-white
+           font-semibold text-sm py-2.5 px-5 rounded-lg
+           transition-colors duration-150
+           focus:outline-none focus:ring-2 focus:ring-mph-navy focus:ring-offset-2;
+  }
+
+  /* Ghost / cancel button */
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2
+           bg-white hover:bg-gray-100 text-gray-700 border border-gray-300
+           font-semibold text-sm py-2.5 px-5 rounded-lg
+           transition-colors duration-150
+           focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2;
+  }
+
+  /* Results card wrapper */
+  .results-card {
+    @apply bg-white rounded-2xl border border-gray-200 shadow-md p-5;
+  }
+}
+
+/* ── Base tweaks ─────────────────────────────────────────────────── */
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Remove number input spinners for cleaner look */
+  input[type='number']::-webkit-outer-spin-button,
+  input[type='number']::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type='number'] { -moz-appearance: textfield; }
+}
