@@ -207,7 +207,7 @@ export async function getDestinationCities(accessToken) {
   let allItems = []
   let url =
     `${GRAPH_BASE}/sites/${siteId}/lists/${listId}/items` +
-    `?$expand=fields&$select=fields/${fm.destCity},fields/${fm.destState}&$top=999`
+    `?$expand=fields($select=${fm.destCity},${fm.destState})&$top=999`
 
   while (url) {
     const data = await graphFetch(accessToken, url, {
