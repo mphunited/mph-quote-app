@@ -111,10 +111,10 @@ async function buildQuotePDF(form, lineItems, salesperson) {
   const COL2 = RX + 48
   let cy = 59
 
-  // Header
+  // Header — centered over both columns
   doc.setFont('helvetica', 'bold'); doc.setFontSize(9.5)
   doc.setTextColor(...AMBER)
-  doc.text('CUSTOMER DETAILS', W - 14, cy, { align: 'right' })
+  doc.text('CUSTOMER DETAILS', (RX + W - 12) / 2, cy, { align: 'center' })
   doc.setDrawColor(...AMBER); doc.setLineWidth(0.5)
   doc.line(RX, cy + 1.5, W - 12, cy + 1.5)
   cy += 8
@@ -245,8 +245,11 @@ async function buildQuotePDF(form, lineItems, salesperson) {
     doc.text(lines.slice(0, 3), tX + 3, nY + 12)
   }
 
-  // ── Footer: lead time text (left) + IBC image (right) ─────────────────────
-  const fStart = nY + 30
+  // ── Footer: lead time text (left) + IBC composite image (right) ───────────
+  // Anchor the footer block to the bottom of the page (just above the navy bar)
+  // Text block total height: ~37mm; pin last line to H - 14
+  const TEXT_BLOCK_H = 37   // approximate total height of text lines
+  const fStart = H - 11 - 3 - TEXT_BLOCK_H   // start so text ends just above navy bar
   let fY = fStart
 
   doc.setFontSize(8.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(...DARK)
@@ -264,15 +267,22 @@ async function buildQuotePDF(form, lineItems, salesperson) {
   doc.setTextColor(...NAVY)
   doc.text('https://www.mphunited.com', tX, fY)
 
-  // IBC tote image — right side, same vertical band as footer text
-  const ibcX   = 130
-  const ibcY   = fStart - 2
+  // IBC composite image (totes + drums + US flag) — bottom-right, just above navy bar
+  // Image aspect ratio: 979×776 → width/height = 1.261
   const ibcW   = 72
-  const ibcH   = Math.min(ibcW * (454 / 544), H - 14 - ibcY)  // keep aspect ratio
+  const ibcH   = ibcW * (776 / 979)           // ≈ 57mm — keeps aspect ratio
+  const ibcX   = W - ibcW - 12               // flush to right margin
+  const ibcY   = H - 11 - 3 - ibcH           // bottomed out just above navy bar
   try {
-    const ibc = await loadImageAsBase64('/ibc-totes.jpg')
+    const ibc = await loadImageAsBase64('/ibc-composite.jpg')
     doc.addImage(ibc, 'JPEG', ibcX, ibcY, ibcW, ibcH)
-  } catch { /* skip if unavailable */ }
+  } catch {
+    // fall back to totes-only if composite not found
+    try {
+      const ibc = await loadImageAsBase64('/ibc-totes.jpg')
+      doc.addImage(ibc, 'JPEG', ibcX, ibcY, ibcW, ibcW * (454 / 544))
+    } catch { /* skip if unavailable */ }
+  }
 
   // ── bottom navy bar ───────────────────────────────────────────────────────
   doc.setFillColor(...NAVY)
