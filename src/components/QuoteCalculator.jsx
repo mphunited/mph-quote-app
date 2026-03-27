@@ -198,7 +198,7 @@ export default function QuoteCalculator({ userProfile, activeTab, onTabChange })
                   : 'text-blue-200 hover:text-white hover:bg-white/10'
               }`}
             >
-              📊 Margins
+              📊 Sales Margins Calculator
             </button>
             <button
               onClick={() => onTabChange?.('quote')}
@@ -208,7 +208,7 @@ export default function QuoteCalculator({ userProfile, activeTab, onTabChange })
                   : 'text-blue-200 hover:text-white hover:bg-white/10'
               }`}
             >
-              📄 Quote Builder
+              📄 Create a Customer Quote
             </button>
           </div>
         </div>
