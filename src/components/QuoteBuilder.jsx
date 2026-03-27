@@ -51,20 +51,20 @@ async function buildQuotePDF(form, lineItems, salesperson) {
   doc.setFillColor(...NAVY)
   doc.rect(0, 0, W, 9, 'F')
 
-  // ── square logo box ───────────────────────────────────────────────────────
+  // ── logo (gold-framed square, frame is part of the image) ────────────────
   const LOGO = 46
-  doc.setFillColor(...WHITE)
-  doc.setDrawColor(...NAVY)
-  doc.setLineWidth(0.3)
-  doc.rect(10, 10, LOGO, LOGO, 'FD')
   try {
-    const logo = await loadImageAsBase64('/mph-logo-square.jpg')
-    doc.addImage(logo, 'JPEG', 11, 11, LOGO - 2, LOGO - 2)
+    const logo = await loadImageAsBase64('/mph-logo-framed.jpg')
+    doc.addImage(logo, 'JPEG', 10, 10, LOGO, LOGO)
   } catch {
     try {
-      const logo = await loadImageAsBase64('/MPH-Logo.png')
-      doc.addImage(logo, 'PNG', 11, 11, LOGO - 2, LOGO - 2)
+      const logo = await loadImageAsBase64('/mph-logo-square.jpg')
+      doc.addImage(logo, 'JPEG', 10, 10, LOGO, LOGO)
     } catch {
+      doc.setFillColor(...WHITE)
+      doc.setDrawColor(...NAVY)
+      doc.setLineWidth(0.3)
+      doc.rect(10, 10, LOGO, LOGO, 'FD')
       doc.setFontSize(11); doc.setFont('helvetica', 'bold')
       doc.setTextColor(...NAVY)
       doc.text('MPH United', 10 + LOGO / 2, 10 + LOGO / 2, { align: 'center' })
