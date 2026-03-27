@@ -265,3 +265,39 @@ export async function sendQuoteEmail(accessToken, toAddresses, subject, htmlBody
     body: JSON.stringify({ message, saveToSentItems: true }),
   })
 }
+
+/**
+ * Sends an email with a PDF file attachment from the logged-in user's M365 account.
+ *
+ * @param {string}   accessToken  - MSAL token with Mail.Send scope
+ * @param {string[]} toAddresses  - Recipient email addresses
+ * @param {string}   subject
+ * @param {string}   htmlBody     - HTML content for the email body
+ * @param {string}   filename     - Attachment filename (e.g. "Quote_J032626-1.pdf")
+ * @param {string}   pdfBase64    - Base64-encoded PDF content (no data URI prefix)
+ */
+export async function sendEmailWithAttachment(accessToken, toAddresses, subject, htmlBody, filename, pdfBase64) {
+  const message = {
+    subject,
+    body: {
+      contentType: 'HTML',
+      content: htmlBody,
+    },
+    toRecipients: toAddresses.map(addr => ({
+      emailAddress: { address: addr },
+    })),
+    attachments: [
+      {
+        '@odata.type': '#microsoft.graph.fileAttachment',
+        name: filename,
+        contentType: 'application/pdf',
+        contentBytes: pdfBase64,
+      },
+    ],
+  }
+
+  await graphFetch(accessToken, `${GRAPH_BASE}/me/sendMail`, {
+    method: 'POST',
+    body: JSON.stringify({ message, saveToSentItems: true }),
+  })
+}

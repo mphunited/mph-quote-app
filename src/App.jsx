@@ -5,13 +5,15 @@ import { graphScopes } from './authConfig'
 import { getUserProfile } from './graphService'
 import LoginPage from './components/LoginPage'
 import QuoteCalculator from './components/QuoteCalculator'
+import QuoteBuilder from './components/QuoteBuilder'
 
 export default function App() {
   const { instance, accounts, inProgress } = useMsal()
   const isAuthenticated = useIsAuthenticated()
 
-  const [userProfile, setUserProfile] = useState(null)
+  const [userProfile,  setUserProfile]  = useState(null)
   const [profileError, setProfileError] = useState(null)
+  const [activeTab,    setActiveTab]    = useState('calculator')
 
   // Fetch the user's M365 profile after login
   useEffect(() => {
@@ -77,5 +79,21 @@ export default function App() {
     )
   }
 
-  return <QuoteCalculator userProfile={userProfile} />
+  if (activeTab === 'quote') {
+    return (
+      <QuoteBuilder
+        userProfile={userProfile}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+      />
+    )
+  }
+
+  return (
+    <QuoteCalculator
+      userProfile={userProfile}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+    />
+  )
 }

@@ -31,9 +31,11 @@ export const VENDORS = [
     id: 'rrg',
     name: 'RRG (Rural Recycling Grinding)',
     origin: { city: 'Stanwood', state: 'IA' },
+    // Buy price is $60 for both 275 and 330 gal
     defaultBuyPrice: 60,
     usesBottles: true,
-    defaultBottleCost: 55,
+    // Bottle cost: $58 for 275 gal / $66 for 330 gal — defaults to 275 gal; override as needed
+    defaultBottleCost: 58,
     defaultBottleFreightRate: 1100,
     defaultDescriptions: ['275 Gal Rebottle IBC', '330 Gal Rebottle IBC'],
   },
@@ -41,19 +43,25 @@ export const VENDORS = [
     id: 'sts',
     name: 'STS (Superior Tote Solutions)',
     origin: { city: 'Summitville', state: 'IN' },
-    defaultBuyPrice: 160,
+    defaultBuyPrice: 140,   // 275 gal rebottle default
+    buyPriceByDescription: {
+      '275 Gal Rebottle IBC':  140,
+      '330 Gal Rebottle IBC':  160,
+      '275 Gal Washouts IBC':  110,
+    },
     usesBottles: false,
     defaultBottleCost: 0,
     defaultBottleFreightRate: 0,
-    defaultDescriptions: ['275 Gal Rebottle IBC', '275 Gal Washouts IBC'],
+    defaultDescriptions: ['275 Gal Rebottle IBC', '330 Gal Rebottle IBC', '275 Gal Washouts IBC'],
   },
   {
     id: 'alliance-greenwood',
     name: 'Alliance Container – Greenwood',
     origin: { city: 'Greenwood', state: 'IN' },
-    defaultBuyPrice: 875,
+    defaultBuyPrice: 0,     // No cage buy price — cost is bottle only
     usesBottles: true,
-    defaultBottleCost: 55,
+    // Bottle cost: $58 for 275 gal / $66 for 330 gal — defaults to 275 gal; override as needed
+    defaultBottleCost: 58,
     defaultBottleFreightRate: 0,
     defaultDescriptions: ['275 Gal Rebottle IBC', '330 Gal Rebottle IBC'],
   },
@@ -61,9 +69,10 @@ export const VENDORS = [
     id: 'alliance-hillsboro',
     name: 'Alliance Container – Hillsboro',
     origin: { city: 'Hillsboro', state: 'TX' },
-    defaultBuyPrice: 750,
+    defaultBuyPrice: 0,     // No cage buy price — cost is bottle only
     usesBottles: true,
-    defaultBottleCost: 55,
+    // Bottle cost: $58.50 for 275 gal / $63 for 330 gal — defaults to 275 gal; override as needed
+    defaultBottleCost: 58.5,
     defaultBottleFreightRate: 0,
     defaultDescriptions: ['275 Gal Rebottle IBC', '330 Gal Rebottle IBC'],
   },
@@ -71,11 +80,15 @@ export const VENDORS = [
     id: 'clean-environmental',
     name: 'Clean Environmental',
     origin: { city: 'St. Louis', state: 'MO' },
-    defaultBuyPrice: 115,
+    defaultBuyPrice: 67.5,  // 275 gal rebottle default
+    buyPriceByDescription: {
+      '275 Gal Rebottle IBC': 67.5,
+      '275 Gal Washouts IBC': 95,
+    },
     usesBottles: true,
     defaultBottleCost: 55,
     defaultBottleFreightRate: 895,
-    defaultDescriptions: ['275 Gal Washouts IBC', '275 Gal Rebottle IBC'],
+    defaultDescriptions: ['275 Gal Rebottle IBC', '275 Gal Washouts IBC'],
   },
   {
     id: 'core-ibcs',
@@ -89,11 +102,11 @@ export const VENDORS = [
       { city: 'Waterloo',     state: 'IA' },
       { city: 'Calhoun',      state: 'GA' },
     ],
-    defaultBuyPrice: 158,
+    defaultBuyPrice: 155,
     buyPriceByDescription: {
-      '275 Gal New IBC': 158,
-      '330 Gal New IBC': 173,
-      '135 Gal New IBC': 180,
+      '275 Gal New IBC': 155,
+      '330 Gal New IBC': 170,
+      '135 Gal New IBC': 170,
     },
     usesBottles: false,
     defaultBottleCost: 0,
@@ -104,7 +117,12 @@ export const VENDORS = [
     id: 'united-container',
     name: 'United Container',
     origin: { city: 'Hillsboro', state: 'TX' },
-    defaultBuyPrice: 65,
+    defaultBuyPrice: 65,    // 275 gal rebottle default
+    buyPriceByDescription: {
+      '275 Gal Rebottle IBC': 65,
+      '330 Gal Rebottle IBC': 65,
+      '275 Gal Washouts IBC': 85,
+    },
     usesBottles: true,
     defaultBottleCost: 55,
     defaultBottleFreightRate: 0,
@@ -114,17 +132,27 @@ export const VENDORS = [
     id: '5star',
     name: '5 Star Industrial Containers',
     origin: { city: 'Bristow', state: 'OK' },
-    defaultBuyPrice: 110,
+    defaultBuyPrice: 65,    // 275 gal rebottle default
+    buyPriceByDescription: {
+      '275 Gal Rebottle IBC':  65,
+      '330 Gal Rebottle IBC': 165,
+      '275 Gal Washouts IBC':  80,
+      '330 Gal Washouts IBC': 110,
+    },
     usesBottles: true,
     defaultBottleCost: 55,
     defaultBottleFreightRate: 1025,
-    defaultDescriptions: ['275 Gal Rebottle IBC', '330 Gal Rebottle IBC', '275 Gal Washouts IBC'],
+    defaultDescriptions: ['275 Gal Rebottle IBC', '330 Gal Rebottle IBC', '275 Gal Washouts IBC', '330 Gal Washouts IBC'],
   },
   {
     id: 'gpc',
     name: 'GPC (Great Plains – Garden City)',
     origin: { city: 'Garden City', state: 'KS' },
-    defaultBuyPrice: 65,
+    defaultBuyPrice: 65,    // 275 gal rebottle default
+    buyPriceByDescription: {
+      '275 Gal Rebottle IBC': 65,
+      '275 Gal Washouts IBC': 90,
+    },
     usesBottles: true,
     defaultBottleCost: 55,
     defaultBottleFreightRate: 1335,
@@ -134,27 +162,42 @@ export const VENDORS = [
     id: 'sec',
     name: 'SEC (SouthEast Container)',
     origin: { city: 'Cleveland', state: 'MS' },
-    defaultBuyPrice: 105,
+    defaultBuyPrice: 75,    // 275 gal rebottle default
+    buyPriceByDescription: {
+      '275 Gal Rebottle IBC':  75,
+      '330 Gal Rebottle IBC':  88,
+      '275 Gal Washouts IBC':  85,
+      '330 Gal Washouts IBC': 105,
+    },
     usesBottles: true,
     defaultBottleCost: 55,
-    defaultBottleFreightRate: 1225,
-    defaultDescriptions: ['275 Gal Washouts IBC', '275 Gal Rebottle IBC'],
+    defaultBottleFreightRate: 995,   // updated from 1225
+    defaultDescriptions: ['275 Gal Rebottle IBC', '330 Gal Rebottle IBC', '275 Gal Washouts IBC', '330 Gal Washouts IBC'],
   },
   {
     id: 'ted-levine',
     name: 'Ted Levine Drum Co',
     origin: { city: 'South El Monte', state: 'CA' },
-    defaultBuyPrice: 175,
+    defaultBuyPrice: 160,   // 275 gal rebottle default
+    buyPriceByDescription: {
+      '275 Gal Rebottle IBC': 160,
+      '330 Gal Rebottle IBC': 175,
+      '275 Gal Washouts IBC': 105,
+    },
     usesBottles: false,
     defaultBottleCost: 0,
     defaultBottleFreightRate: 0,
-    defaultDescriptions: ['275 Gal Rebottle IBC', '330 Gal Rebottle IBC'],
+    defaultDescriptions: ['275 Gal Rebottle IBC', '330 Gal Rebottle IBC', '275 Gal Washouts IBC'],
   },
   {
     id: 'ttw',
     name: 'TTW (Texas Tote Works)',
     origin: { city: 'Odessa', state: 'TX' },
-    defaultBuyPrice: 110,
+    defaultBuyPrice: 85,    // 275 gal washout default
+    buyPriceByDescription: {
+      '275 Gal Washouts IBC':  85,
+      '330 Gal Washouts IBC': 110,
+    },
     usesBottles: false,
     defaultBottleCost: 0,
     defaultBottleFreightRate: 0,

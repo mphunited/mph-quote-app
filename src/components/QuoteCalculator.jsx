@@ -65,7 +65,7 @@ function Section({ title, children, accent }) {
   )
 }
 
-export default function QuoteCalculator({ userProfile }) {
+export default function QuoteCalculator({ userProfile, activeTab, onTabChange }) {
   const { accounts } = useMsal()
   const userEmail = (userProfile?.mail || userProfile?.userPrincipalName || accounts[0]?.username || '').toLowerCase()
   const showCommission = COMMISSION_VISIBLE_EMAILS.includes(userEmail)
@@ -188,9 +188,29 @@ export default function QuoteCalculator({ userProfile }) {
               className="h-7 object-contain"
             />
           </div>
-          <span className="text-mph-amber text-xs font-semibold hidden sm:inline tracking-wide">
-            Quote Calculator
-          </span>
+          {/* Tab buttons */}
+          <div className="flex gap-1 ml-2">
+            <button
+              onClick={() => onTabChange?.('calculator')}
+              className={`px-3 py-1.5 rounded text-xs font-semibold transition-colors ${
+                activeTab === 'calculator'
+                  ? 'bg-mph-amber text-mph-navy'
+                  : 'text-blue-200 hover:text-white hover:bg-white/10'
+              }`}
+            >
+              📊 Margins
+            </button>
+            <button
+              onClick={() => onTabChange?.('quote')}
+              className={`px-3 py-1.5 rounded text-xs font-semibold transition-colors ${
+                activeTab === 'quote'
+                  ? 'bg-mph-amber text-mph-navy'
+                  : 'text-blue-200 hover:text-white hover:bg-white/10'
+              }`}
+            >
+              📄 Quote Builder
+            </button>
+          </div>
         </div>
         <div className="text-xs text-blue-200 text-right">
           <div>{userProfile?.displayName}</div>
