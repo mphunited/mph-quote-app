@@ -51,45 +51,35 @@ async function buildQuotePDF(form, lineItems, salesperson) {
   doc.setFillColor(...NAVY)
   doc.rect(0, 0, W, 9, 'F')
 
-  // ── logo (gold-framed square, frame is part of the image) ────────────────
-  const LOGO = 46
+  // ── logo — TOP RIGHT, used as-is (300×300 square) ────────────────────────
+  const LOGO = 48
   try {
-    const logo = await loadImageAsBase64('/mph-logo-framed.jpg')
-    doc.addImage(logo, 'JPEG', 10, 10, LOGO, LOGO)
+    const logo = await loadImageAsBase64('/MPH_Logo.png')
+    doc.addImage(logo, 'PNG', W - LOGO - 10, 10, LOGO, LOGO)
   } catch {
-    try {
-      const logo = await loadImageAsBase64('/mph-logo-square.jpg')
-      doc.addImage(logo, 'JPEG', 10, 10, LOGO, LOGO)
-    } catch {
-      doc.setFillColor(...WHITE)
-      doc.setDrawColor(...NAVY)
-      doc.setLineWidth(0.3)
-      doc.rect(10, 10, LOGO, LOGO, 'FD')
-      doc.setFontSize(11); doc.setFont('helvetica', 'bold')
-      doc.setTextColor(...NAVY)
-      doc.text('MPH United', 10 + LOGO / 2, 10 + LOGO / 2, { align: 'center' })
-    }
+    doc.setFontSize(10); doc.setFont('helvetica', 'bold'); doc.setTextColor(...NAVY)
+    doc.text('MPH United', W - 33, 35, { align: 'center' })
   }
 
-  // ── QUOTE heading ─────────────────────────────────────────────────────────
+  // ── QUOTE heading — LEFT side ─────────────────────────────────────────────
   doc.setFontSize(40); doc.setFont('helvetica', 'bold')
   doc.setTextColor(...DARK)
-  doc.text('QUOTE', W - 14, 29, { align: 'right' })
+  doc.text('QUOTE', 14, 32, { align: 'left' })
 
-  // ── Date / Quote # ────────────────────────────────────────────────────────
-  const lx1 = W - 82, lx2 = W - 12
+  // ── Date / Quote # — LEFT side, below QUOTE heading ───────────────────────
+  const lxLbl = 14, lxVal = 90
   doc.setFontSize(10); doc.setFont('helvetica', 'normal')
-  doc.setTextColor(...MID); doc.text('Date:', lx1, 39)
+  doc.setTextColor(...MID); doc.text('Date:', lxLbl, 43)
   doc.setFont('helvetica', 'bold'); doc.setTextColor(...NAVY)
-  doc.text(fmtDate(form.quoteDate), lx2, 39, { align: 'right' })
+  doc.text(fmtDate(form.quoteDate), lxVal, 43, { align: 'right' })
   doc.setDrawColor(...NAVY); doc.setLineWidth(0.3)
-  doc.line(lx1 + 10, 40.5, lx2, 40.5)
+  doc.line(lxLbl + 10, 44.5, lxVal, 44.5)
 
   doc.setFont('helvetica', 'normal'); doc.setTextColor(...MID)
-  doc.text('Quote #:', lx1, 49)
+  doc.text('Quote #:', lxLbl, 53)
   doc.setFont('helvetica', 'bold'); doc.setTextColor(...NAVY)
-  doc.text(form.quoteNumber || '', lx2, 49, { align: 'right' })
-  doc.line(lx1 + 18, 50.5, lx2, 50.5)
+  doc.text(form.quoteNumber || '', lxVal, 53, { align: 'right' })
+  doc.line(lxLbl + 18, 54.5, lxVal, 54.5)
 
   // ── salesperson block (left) ──────────────────────────────────────────────
   let sy = 63
@@ -267,22 +257,15 @@ async function buildQuotePDF(form, lineItems, salesperson) {
   doc.setTextColor(...NAVY)
   doc.text('https://www.mphunited.com', tX, fY)
 
-  // IBC composite image (totes + drums + US flag) — bottom-right, just above navy bar
-  // Image aspect ratio: 979×776 → width/height = 1.261
-  const ibcW   = 72
-  const ibcH   = ibcW * (776 / 979)           // ≈ 57mm — keeps aspect ratio
-  const ibcX   = W - ibcW - 12               // flush to right margin
-  const ibcY   = H - 11 - 3 - ibcH           // bottomed out just above navy bar
+  // IBC/Drum image — BOTTOM RIGHT, used as-is (273×169, ratio 1.6154)
+  const ibcW = 76
+  const ibcH = ibcW * (169 / 273)             // ≈ 47mm — native aspect ratio
+  const ibcX = W - ibcW - 10                  // flush to right margin
+  const ibcY = H - 11 - 4 - ibcH             // sits just above navy footer bar
   try {
-    const ibc = await loadImageAsBase64('/ibc-composite.jpg')
-    doc.addImage(ibc, 'JPEG', ibcX, ibcY, ibcW, ibcH)
-  } catch {
-    // fall back to totes-only if composite not found
-    try {
-      const ibc = await loadImageAsBase64('/ibc-totes.jpg')
-      doc.addImage(ibc, 'JPEG', ibcX, ibcY, ibcW, ibcW * (454 / 544))
-    } catch { /* skip if unavailable */ }
-  }
+    const ibc = await loadImageAsBase64('/IBCs_Drum.png')
+    doc.addImage(ibc, 'PNG', ibcX, ibcY, ibcW, ibcH)
+  } catch { /* skip if unavailable */ }
 
   // ── bottom navy bar ───────────────────────────────────────────────────────
   doc.setFillColor(...NAVY)
