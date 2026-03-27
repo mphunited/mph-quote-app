@@ -51,35 +51,35 @@ async function buildQuotePDF(form, lineItems, salesperson) {
   doc.setFillColor(...NAVY)
   doc.rect(0, 0, W, 9, 'F')
 
-  // ── logo — TOP RIGHT, used as-is (300×300 square) ────────────────────────
+  // ── logo — TOP LEFT, used as-is (300×300 square) ─────────────────────────
   const LOGO = 48
   try {
     const logo = await loadImageAsBase64('/MPH_Logo.png')
-    doc.addImage(logo, 'PNG', W - LOGO - 10, 10, LOGO, LOGO)
+    doc.addImage(logo, 'PNG', 10, 10, LOGO, LOGO)
   } catch {
     doc.setFontSize(10); doc.setFont('helvetica', 'bold'); doc.setTextColor(...NAVY)
-    doc.text('MPH United', W - 33, 35, { align: 'center' })
+    doc.text('MPH United', 34, 35, { align: 'center' })
   }
 
-  // ── QUOTE heading — LEFT side ─────────────────────────────────────────────
+  // ── QUOTE heading — RIGHT side ────────────────────────────────────────────
   doc.setFontSize(40); doc.setFont('helvetica', 'bold')
   doc.setTextColor(...DARK)
-  doc.text('QUOTE', 14, 32, { align: 'left' })
+  doc.text('QUOTE', W - 14, 29, { align: 'right' })
 
-  // ── Date / Quote # — LEFT side, below QUOTE heading ───────────────────────
-  const lxLbl = 14, lxVal = 90
+  // ── Date / Quote # — RIGHT side ───────────────────────────────────────────
+  const lxLbl = W - 82, lxVal = W - 12
   doc.setFontSize(10); doc.setFont('helvetica', 'normal')
-  doc.setTextColor(...MID); doc.text('Date:', lxLbl, 43)
+  doc.setTextColor(...MID); doc.text('Date:', lxLbl, 39)
   doc.setFont('helvetica', 'bold'); doc.setTextColor(...NAVY)
-  doc.text(fmtDate(form.quoteDate), lxVal, 43, { align: 'right' })
+  doc.text(fmtDate(form.quoteDate), lxVal, 39, { align: 'right' })
   doc.setDrawColor(...NAVY); doc.setLineWidth(0.3)
-  doc.line(lxLbl + 10, 44.5, lxVal, 44.5)
+  doc.line(lxLbl + 10, 40.5, lxVal, 40.5)
 
   doc.setFont('helvetica', 'normal'); doc.setTextColor(...MID)
-  doc.text('Quote #:', lxLbl, 53)
+  doc.text('Quote #:', lxLbl, 49)
   doc.setFont('helvetica', 'bold'); doc.setTextColor(...NAVY)
-  doc.text(form.quoteNumber || '', lxVal, 53, { align: 'right' })
-  doc.line(lxLbl + 18, 54.5, lxVal, 54.5)
+  doc.text(form.quoteNumber || '', lxVal, 49, { align: 'right' })
+  doc.line(lxLbl + 18, 50.5, lxVal, 50.5)
 
   // ── salesperson block (left) ──────────────────────────────────────────────
   let sy = 63
