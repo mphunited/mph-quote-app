@@ -81,19 +81,20 @@ async function buildQuotePDF(form, lineItems, salesperson) {
   doc.text(form.quoteNumber || '', lxVal, 49, { align: 'right' })
   doc.line(lxLbl + 18, 50.5, lxVal, 50.5)
 
-  // ── salesperson block (left) ──────────────────────────────────────────────
+  // ── salesperson block — centered under logo ───────────────────────────────
+  const spCX = 10 + LOGO / 2   // horizontal center of the logo (= 34mm)
   let sy = 63
   doc.setFont('helvetica', 'bold'); doc.setFontSize(11)
   doc.setTextColor(...DARK)
-  doc.text(salesperson.name, 14, sy);      sy += 6
+  doc.text(salesperson.name,     spCX, sy, { align: 'center' }); sy += 6
   doc.setFont('helvetica', 'normal'); doc.setFontSize(10)
-  doc.text(salesperson.phone, 14, sy);     sy += 6
-  doc.text(salesperson.email, 14, sy);     sy += 9
+  doc.text(salesperson.phone,    spCX, sy, { align: 'center' }); sy += 6
+  doc.text(salesperson.email,    spCX, sy, { align: 'center' }); sy += 9
   doc.setFont('helvetica', 'bold')
-  doc.text('MPH United', 14, sy);          sy += 5.5
+  doc.text('MPH United',         spCX, sy, { align: 'center' }); sy += 5.5
   doc.setFont('helvetica', 'normal')
-  doc.text('PO Box 1270', 14, sy);         sy += 5.5
-  doc.text('Fairhope, AL 36532', 14, sy)
+  doc.text('PO Box 1270',        spCX, sy, { align: 'center' }); sy += 5.5
+  doc.text('Fairhope, AL 36532', spCX, sy, { align: 'center' })
 
   // ── CUSTOMER DETAILS – two-column layout (right half) ─────────────────────
   const RX = 108         // right section start x
