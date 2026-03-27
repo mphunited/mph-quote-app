@@ -127,7 +127,7 @@ async function buildQuotePDF(form, lineItems, salesperson) {
   const col2 = [
     ['Company Name',    form.companyName],
     ['Address',         form.address],
-    ['City, State, Zip',form.cityStateZip],
+    ['City, State, Zip', [form.city, [form.state, form.zip].filter(Boolean).join(' ')].filter(Boolean).join(', ')],
   ]
 
   const colW1 = COL2 - COL1 - 2
@@ -340,7 +340,9 @@ export default function QuoteBuilder({ userProfile, activeTab, onTabChange }) {
     contactEmail: '',
     companyName:  '',
     address:      '',
-    cityStateZip: '',
+    city:         '',
+    state:        '',
+    zip:          '',
     leadTime:     '',
     specialNotes: '',
   }))
@@ -375,7 +377,7 @@ export default function QuoteBuilder({ userProfile, activeTab, onTabChange }) {
       quoteDate:    today(),
       quoteNumber:  generateQuoteNumber(salesperson?.firstLetter || 'X'),
       contactName: '', contactPhone: '', contactEmail: '',
-      companyName: '', address: '', cityStateZip: '',
+      companyName: '', address: '', city: '', state: '', zip: '',
       leadTime: '', specialNotes: '',
     })
     setLineItems(Array(8).fill(null).map(() => ({ ...EMPTY_ITEM })))
@@ -510,12 +512,24 @@ export default function QuoteBuilder({ userProfile, activeTab, onTabChange }) {
         {/* B: Customer Details */}
         <Section title="B · Customer Details" accent>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <Field label="Company Name"    name="companyName"  value={form.companyName}  onChange={handleFormChange} required placeholder="Customer company" />
-            <Field label="Contact Name"    name="contactName"  value={form.contactName}  onChange={handleFormChange} placeholder="Full name" />
-            <Field label="Contact Phone"   name="contactPhone" value={form.contactPhone} onChange={handleFormChange} placeholder="555.123.4567" />
-            <Field label="Contact Email"   name="contactEmail" type="email" value={form.contactEmail} onChange={handleFormChange} placeholder="contact@company.com" />
-            <Field label="Address"         name="address"      value={form.address}      onChange={handleFormChange} placeholder="Street address" />
-            <Field label="City, State, Zip" name="cityStateZip" value={form.cityStateZip} onChange={handleFormChange} placeholder="City, ST 00000" />
+            <Field label="Company Name"  name="companyName"  value={form.companyName}  onChange={handleFormChange} required placeholder="Customer company" />
+            <Field label="Contact Name"  name="contactName"  value={form.contactName}  onChange={handleFormChange} placeholder="Full name" />
+            <Field label="Contact Phone" name="contactPhone" value={form.contactPhone} onChange={handleFormChange} placeholder="555.123.4567" />
+            <Field label="Contact Email" name="contactEmail" type="email" value={form.contactEmail} onChange={handleFormChange} placeholder="contact@company.com" />
+            <Field label="Address"       name="address"      value={form.address}      onChange={handleFormChange} placeholder="Street address" />
+            <div>{/* empty cell to keep grid aligned */}</div>
+            {/* City / State / Zip on their own row */}
+            <div className="sm:col-span-2 grid grid-cols-6 gap-3">
+              <div className="col-span-3">
+                <Field label="City" name="city" value={form.city} onChange={handleFormChange} placeholder="City" />
+              </div>
+              <div className="col-span-1">
+                <Field label="State" name="state" value={form.state} onChange={handleFormChange} placeholder="AL" />
+              </div>
+              <div className="col-span-2">
+                <Field label="Zip" name="zip" value={form.zip} onChange={handleFormChange} placeholder="00000" />
+              </div>
+            </div>
           </div>
         </Section>
 
