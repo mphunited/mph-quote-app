@@ -35,8 +35,8 @@ async function graphFetch(accessToken, url, options = {}) {
     )
   }
 
-  // 204 No Content (e.g. sendMail) has no body – return null instead of crashing
-  if (response.status === 204) return null
+  // 202 Accepted (sendMail) and 204 No Content have no body – return null instead of crashing
+  if (response.status === 202 || response.status === 204) return null
 
   return response.json()
 }
