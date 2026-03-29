@@ -34,10 +34,10 @@ const EMPTY_FORM = {
 }
 
 /** Number input with label */
-function NumberField({ label, name, value, onChange, placeholder, hint, required }) {
+function NumberField({ label, name, value, onChange, placeholder, hint, required, isCost }) {
   return (
     <div>
-      <label className="field-label">
+      <label className={`field-label${isCost ? ' text-red-600' : ''}`}>
         {label}{required && <span className="text-red-400 ml-0.5">*</span>}
         {hint && <span className="text-gray-400 ml-1 font-normal text-xs">({hint})</span>}
       </label>
@@ -198,7 +198,7 @@ export default function QuoteCalculator({ userProfile, activeTab, onTabChange })
                   : 'text-blue-200 hover:text-white hover:bg-white/10'
               }`}
             >
-              📊 Margins
+              📊 Sales Margins Calculator
             </button>
             <button
               onClick={() => onTabChange?.('quote')}
@@ -208,7 +208,7 @@ export default function QuoteCalculator({ userProfile, activeTab, onTabChange })
                   : 'text-blue-200 hover:text-white hover:bg-white/10'
               }`}
             >
-              📄 Quote Builder
+              📄 Create a Customer Quote
             </button>
           </div>
         </div>
@@ -294,7 +294,7 @@ export default function QuoteCalculator({ userProfile, activeTab, onTabChange })
               </div>
 
               <NumberField label="IBC Quantity" name="ibcQty"        value={form.ibcQty}    onChange={handleChange} required placeholder="e.g. 60" />
-              <NumberField label="Buy Price / Unit"  name="buyPrice"  value={form.buyPrice}  onChange={handleChange} required hint="from vendor" />
+              <NumberField label="Buy Price / Unit"  name="buyPrice"  value={form.buyPrice}  onChange={handleChange} required hint="from vendor" isCost />
               <NumberField label="Sell Price / Unit" name="sellPrice" value={form.sellPrice} onChange={handleChange} required hint="quoted to customer" />
             </div>
           </Section>
@@ -303,9 +303,9 @@ export default function QuoteCalculator({ userProfile, activeTab, onTabChange })
           {selectedVendor?.usesBottles && (
             <Section title="C · Bottle Costs">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <NumberField label="Bottle Cost / Unit" name="bottleCost"         value={form.bottleCost}        onChange={handleChange} hint="pre-filled" />
+                <NumberField label="Bottle Cost / Unit" name="bottleCost"         value={form.bottleCost}        onChange={handleChange} hint="pre-filled" isCost />
                 <NumberField label="Bottle Quantity"    name="bottleQty"          value={form.bottleQty}         onChange={handleChange} />
-                <NumberField label="MPH Freight Rate Bottles" name="bottleFreightRate" value={form.bottleFreightRate} onChange={handleChange} hint="total rate ÷ 90 per unit" />
+                <NumberField label="MPH Freight Rate Bottles" name="bottleFreightRate" value={form.bottleFreightRate} onChange={handleChange} hint="total rate ÷ 90 per unit" isCost />
               </div>
             </Section>
           )}
@@ -326,6 +326,7 @@ export default function QuoteCalculator({ userProfile, activeTab, onTabChange })
                 value={form.customerFreight}
                 onChange={handleChange}
                 hint="auto-fills from selection above"
+                isCost
               />
               <NumberField
                 label="Freight Billed to Customer"
@@ -340,7 +341,7 @@ export default function QuoteCalculator({ userProfile, activeTab, onTabChange })
           {/* E: Additional Costs & Commission */}
           <Section title="E · Additional Costs">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <NumberField label="Additional Costs" name="additionalCosts" value={form.additionalCosts} onChange={handleChange} />
+              <NumberField label="Additional Costs" name="additionalCosts" value={form.additionalCosts} onChange={handleChange} isCost />
               {showCommission && (
                 <div>
                   <NumberField
@@ -349,6 +350,7 @@ export default function QuoteCalculator({ userProfile, activeTab, onTabChange })
                     value={form.commission}
                     onChange={handleChange}
                     hint="auto: qty × $3"
+                    isCost
                   />
                   <p className="text-xs text-gray-400 mt-1">Auto-calculated as IBC Qty × $3. You may override.</p>
                 </div>
