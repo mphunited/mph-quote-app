@@ -92,13 +92,19 @@ export default function QuoteCalculator({ userProfile, activeTab, onTabChange })
       ? (form.coreLocation ? vendor.locations.find(l => `${l.city},${l.state}` === form.coreLocation) : null)
       : vendor.origin
 
+    const defaultDesc = vendor.defaultDescriptions?.[0] || ''
+    const defaultQty  = defaultDesc && vendor.defaultQtyByDescription?.[defaultDesc]
+      ? String(vendor.defaultQtyByDescription[defaultDesc])
+      : ''
+
     setForm(prev => ({
       ...prev,
       buyPrice:          String(vendor.defaultBuyPrice),
       bottleCost:        vendor.usesBottles ? String(vendor.defaultBottleCost)        : '0',
       bottleFreightRate: vendor.usesBottles ? String(vendor.defaultBottleFreightRate) : '0',
-      bottleQty:         vendor.usesBottles ? prev.bottleQty : '0',
-      ibcDescription:    vendor.defaultDescriptions?.[0] || '',
+      bottleQty:         vendor.usesBottles ? (defaultQty || prev.bottleQty) : '0',
+      ibcDescription:    defaultDesc,
+      ibcQty:            defaultQty,
       originCity:        origin?.city  || '',
       originState:       origin?.state || '',
       mphFreight:        '',
@@ -116,12 +122,25 @@ export default function QuoteCalculator({ userProfile, activeTab, onTabChange })
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.coreLocation])
 
-  // Auto-update buy price when description changes for vendors with per-description pricing
+  // Auto-update buy price and qty when description changes
   useEffect(() => {
-    if (!selectedVendor?.buyPriceByDescription || !form.ibcDescription) return
-    const price = selectedVendor.buyPriceByDescription[form.ibcDescription]
-    if (price !== undefined) {
-      setForm(prev => ({ ...prev, buyPrice: String(price) }))
+    if (!selectedVendor || !form.ibcDescription) return
+    const updates = {}
+    // Update buy price if vendor has per-description pricing
+    if (selectedVendor.buyPriceByDescription) {
+      const price = selectedVendor.buyPriceByDescription[form.ibcDescription]
+      if (price !== undefined) updates.buyPrice = String(price)
+    }
+    // Update ibcQty (and bottleQty for bottle vendors) if vendor has per-description qty defaults
+    if (selectedVendor.defaultQtyByDescription) {
+      const qty = selectedVendor.defaultQtyByDescription[form.ibcDescription]
+      if (qty !== undefined) {
+        updates.ibcQty = String(qty)
+        if (selectedVendor.usesBottles) updates.bottleQty = String(qty)
+      }
+    }
+    if (Object.keys(updates).length > 0) {
+      setForm(prev => ({ ...prev, ...updates }))
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.ibcDescription])
@@ -268,7 +287,7 @@ export default function QuoteCalculator({ userProfile, activeTab, onTabChange })
               {/* Core-IBCS location picker */}
               {selectedVendor?.multipleLocations && (
                 <div>
-                  <label className="field-label">Core-IBCS Location<span className="text-red-400 ml-0.5">*</span></label>
+                  <label className="field-label">{selectedVendor.name} Location<span className="text-red-400 ml-0.5">*</span></label>
                   <select name="coreLocation" className="field-input" value={form.coreLocation} onChange={handleChange}>
                     <option value="">— Select Location —</option>
                     {selectedVendor.locations.map(l => (

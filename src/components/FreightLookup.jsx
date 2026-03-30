@@ -119,7 +119,12 @@ export default function FreightLookup({ originCity, originState, onSelect, selec
             className="field-input"
             list="dest-city-list"
             value={destCity}
-            onChange={e => setDestCity(e.target.value)}
+            onChange={e => {
+              const val = e.target.value
+              setDestCity(val)
+              const match = destCities.find(({ city }) => city.toLowerCase() === val.toLowerCase())
+              if (match) setDestState(match.state)
+            }}
             placeholder="e.g. Ames"
             autoComplete="off"
           />
