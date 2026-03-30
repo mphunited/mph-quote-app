@@ -242,7 +242,7 @@ export default function QuoteCalculator({ userProfile, activeTab, onTabChange })
         <div className="max-w-7xl mx-auto">
           <p className="text-xs font-bold text-mph-navy uppercase tracking-wider mb-2">How to Use</p>
           <ol className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-8 gap-y-1 text-sm text-gray-700 list-decimal list-inside">
-            <li>In the header, choose to determine <strong>Sales Margin</strong> or <strong>Create a Customer Quote</strong>.</li>
+            <li>In the header, choose <strong>Sales Margin</strong> or <strong>Create a Customer Quote</strong>.</li>
             <li>Below, choose a current customer or enter a new customer.</li>
             <li>Choose a vendor and IBC product along with quantity, buy price, and sell price. If the IBC has a bottle cost, enter it below along with freight rate.</li>
             <li>Under Freight, enter the destination city/state and click <strong>Look Up Freight Quotes</strong>. If there are no freight quotes, enter the freight costs manually.</li>
