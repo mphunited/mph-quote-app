@@ -221,7 +221,7 @@ export default function QuoteCalculator({ userProfile, activeTab, onTabChange })
               className={`px-5 py-2.5 rounded text-sm font-bold transition-colors ${
                 activeTab === 'calculator'
                   ? 'bg-mph-amber text-mph-navy'
-                  : 'text-blue-200 hover:text-white hover:bg-white/10'
+                  : 'bg-blue-500 text-white hover:bg-blue-400'
               }`}
             >
               📊 Sales Margins Calculator
@@ -231,7 +231,7 @@ export default function QuoteCalculator({ userProfile, activeTab, onTabChange })
               className={`px-5 py-2.5 rounded text-sm font-bold transition-colors ${
                 activeTab === 'quote'
                   ? 'bg-mph-amber text-mph-navy'
-                  : 'text-blue-200 hover:text-white hover:bg-white/10'
+                  : 'bg-blue-500 text-white hover:bg-blue-400'
               }`}
             >
               📄 Create a Customer Quote
