@@ -198,20 +198,20 @@ export default function QuoteCalculator({ userProfile, activeTab, onTabChange })
   return (
     <div className="min-h-screen bg-mph-gray">
       {/* Top nav */}
-      <nav className="bg-mph-navy text-white px-4 py-3 flex items-center justify-between shadow-lg">
-        <div className="flex items-center gap-3">
+      <nav className="bg-mph-navy text-white px-6 py-5 flex items-center justify-between shadow-lg">
+        <div className="flex items-center gap-4">
           <div className="bg-white rounded px-2 py-1">
             <img
               src="/MPH-Logo.png"
               alt="MPH United"
-              className="h-7 object-contain"
+              className="h-10 object-contain"
             />
           </div>
           {/* Tab buttons */}
-          <div className="flex gap-1 ml-2">
+          <div className="flex gap-2 ml-3">
             <button
               onClick={() => onTabChange?.('calculator')}
-              className={`px-3 py-1.5 rounded text-xs font-semibold transition-colors ${
+              className={`px-5 py-2.5 rounded text-sm font-bold transition-colors ${
                 activeTab === 'calculator'
                   ? 'bg-mph-amber text-mph-navy'
                   : 'text-blue-200 hover:text-white hover:bg-white/10'
@@ -221,7 +221,7 @@ export default function QuoteCalculator({ userProfile, activeTab, onTabChange })
             </button>
             <button
               onClick={() => onTabChange?.('quote')}
-              className={`px-3 py-1.5 rounded text-xs font-semibold transition-colors ${
+              className={`px-5 py-2.5 rounded text-sm font-bold transition-colors ${
                 activeTab === 'quote'
                   ? 'bg-mph-amber text-mph-navy'
                   : 'text-blue-200 hover:text-white hover:bg-white/10'
@@ -231,11 +231,26 @@ export default function QuoteCalculator({ userProfile, activeTab, onTabChange })
             </button>
           </div>
         </div>
-        <div className="text-xs text-blue-200 text-right">
-          <div>{userProfile?.displayName}</div>
-          <div className="text-blue-300/70">{userProfile?.mail}</div>
+        <div className="text-sm text-blue-200 text-right">
+          <div className="font-semibold">{userProfile?.displayName}</div>
+          <div className="text-blue-300/70 text-xs">{userProfile?.mail}</div>
         </div>
       </nav>
+
+      {/* Instructions banner */}
+      <div className="bg-blue-50 border-b border-blue-100 px-6 py-4">
+        <div className="max-w-7xl mx-auto">
+          <p className="text-xs font-bold text-mph-navy uppercase tracking-wider mb-2">How to Use</p>
+          <ol className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-8 gap-y-1 text-sm text-gray-700 list-decimal list-inside">
+            <li>In the header, choose to determine <strong>Sales Margin</strong> or <strong>Create a Customer Quote</strong>.</li>
+            <li>Below, choose a current customer or enter a new customer.</li>
+            <li>Choose a vendor and IBC product along with quantity, buy price, and sell price. If the IBC has a bottle cost, enter it below along with freight rate.</li>
+            <li>Under Freight, enter the destination city/state and click <strong>Look Up Freight Quotes</strong>. If there are no freight quotes, enter the freight costs manually.</li>
+            <li>If there are additional costs, add them below.</li>
+            <li>You may email the margins quote to yourself and/or to Mike.</li>
+          </ol>
+        </div>
+      </div>
 
       <div className="max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 xl:grid-cols-3 gap-6">
 
@@ -364,7 +379,7 @@ export default function QuoteCalculator({ userProfile, activeTab, onTabChange })
               {showCommission && (
                 <div>
                   <NumberField
-                    label="Commission (Renee)"
+                    label="Commission"
                     name="commission"
                     value={form.commission}
                     onChange={handleChange}
@@ -382,11 +397,11 @@ export default function QuoteCalculator({ userProfile, activeTab, onTabChange })
             <button
               onClick={() => setEmailOpen(true)}
               disabled={!result}
-              className="btn-primary flex-1 disabled:opacity-40 disabled:cursor-not-allowed"
+              className="btn-primary flex-1 text-base py-3 disabled:opacity-40 disabled:cursor-not-allowed"
             >
               📧 Email This Quote
             </button>
-            <button onClick={handleReset} className="btn-ghost flex-1">
+            <button onClick={handleReset} className="btn-ghost flex-1 text-base py-3">
               🔄 New Quote
             </button>
           </div>
