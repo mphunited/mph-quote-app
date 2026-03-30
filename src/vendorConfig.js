@@ -39,7 +39,7 @@ export const VENDORS = [
     defaultDescriptions: ['275 Gal Rebottle IBC', '330 Gal Rebottle IBC', '135 Gal Rebottle IBC', '275 Gal Washouts IBC'],
     defaultQtyByDescription: {
       '275 Gal Rebottle IBC': 60,
-      '330 Gal Rebottle IBC': 78,
+      '330 Gal Rebottle IBC': 60,
       '135 Gal Rebottle IBC': 120,
       '275 Gal Washouts IBC': 60,
     },
@@ -60,7 +60,7 @@ export const VENDORS = [
     defaultDescriptions: ['275 Gal Rebottle IBC', '330 Gal Rebottle IBC', '135 Gal Rebottle IBC', '275 Gal Washouts IBC', '330 Gal Washouts IBC'],
     defaultQtyByDescription: {
       '275 Gal Rebottle IBC': 60,
-      '330 Gal Rebottle IBC': 78,
+      '330 Gal Rebottle IBC': 60,
       '135 Gal Rebottle IBC': 120,
       '275 Gal Washouts IBC': 60,
       '330 Gal Washouts IBC': 60,
@@ -82,7 +82,7 @@ export const VENDORS = [
     defaultDescriptions: ['275 Gal Rebottle IBC', '330 Gal Rebottle IBC', '135 Gal Rebottle IBC', '275 Gal Washouts IBC', '330 Gal Washouts IBC'],
     defaultQtyByDescription: {
       '275 Gal Rebottle IBC': 60,
-      '330 Gal Rebottle IBC': 78,
+      '330 Gal Rebottle IBC': 60,
       '135 Gal Rebottle IBC': 120,
       '275 Gal Washouts IBC': 60,
       '330 Gal Washouts IBC': 60,
@@ -94,12 +94,13 @@ export const VENDORS = [
     origin: { city: 'Greenwood', state: 'IN' },
     defaultBuyPrice: 0,
     usesBottles: true,
+    bottlesOnly: true,
     defaultBottleCost: 58,
     defaultBottleFreightRate: 0,
-    defaultDescriptions: ['275 Gal Rebottle IBC', '330 Gal Rebottle IBC'],
+    defaultDescriptions: ['275 Gal Bottle', '330 Gal Bottle'],
     defaultQtyByDescription: {
-      '275 Gal Rebottle IBC': 90,
-      '330 Gal Rebottle IBC': 78,
+      '275 Gal Bottle': 90,
+      '330 Gal Bottle': 78,
     },
   },
   {
@@ -108,12 +109,13 @@ export const VENDORS = [
     origin: { city: 'Hillsboro', state: 'TX' },
     defaultBuyPrice: 0,
     usesBottles: true,
+    bottlesOnly: true,
     defaultBottleCost: 58.5,
     defaultBottleFreightRate: 0,
-    defaultDescriptions: ['275 Gal Rebottle IBC', '330 Gal Rebottle IBC'],
+    defaultDescriptions: ['275 Gal Bottle', '330 Gal Bottle'],
     defaultQtyByDescription: {
-      '275 Gal Rebottle IBC': 90,
-      '330 Gal Rebottle IBC': 78,
+      '275 Gal Bottle': 90,
+      '330 Gal Bottle': 78,
     },
   },
   {
@@ -122,12 +124,13 @@ export const VENDORS = [
     origin: { city: 'Houston', state: 'TX' },
     defaultBuyPrice: 0,
     usesBottles: true,
+    bottlesOnly: true,
     defaultBottleCost: 0,
     defaultBottleFreightRate: 0,
-    defaultDescriptions: ['275 Gal Rebottle IBC', '330 Gal Rebottle IBC'],
+    defaultDescriptions: ['275 Gal Bottle', '330 Gal Bottle'],
     defaultQtyByDescription: {
-      '275 Gal Rebottle IBC': 90,
-      '330 Gal Rebottle IBC': 78,
+      '275 Gal Bottle': 90,
+      '330 Gal Bottle': 78,
     },
   },
   {
@@ -145,7 +148,7 @@ export const VENDORS = [
     defaultDescriptions: ['275 Gal Rebottle IBC', '330 Gal Rebottle IBC', '135 Gal Rebottle IBC', '275 Gal Washouts IBC', '330 Gal Washouts IBC'],
     defaultQtyByDescription: {
       '275 Gal Rebottle IBC': 60,
-      '330 Gal Rebottle IBC': 78,
+      '330 Gal Rebottle IBC': 60,
       '135 Gal Rebottle IBC': 120,
       '275 Gal Washouts IBC': 60,
       '330 Gal Washouts IBC': 60,
@@ -195,7 +198,7 @@ export const VENDORS = [
     defaultDescriptions: ['275 Gal Rebottle IBC', '330 Gal Rebottle IBC', '135 Gal Rebottle IBC'],
     defaultQtyByDescription: {
       '275 Gal Rebottle IBC': 60,
-      '330 Gal Rebottle IBC': 78,
+      '330 Gal Rebottle IBC': 60,
       '135 Gal Rebottle IBC': 120,
     },
   },
@@ -216,7 +219,7 @@ export const VENDORS = [
     defaultDescriptions: ['275 Gal Rebottle IBC', '330 Gal Rebottle IBC', '135 Gal Rebottle IBC', '275 Gal Washouts IBC', '330 Gal Washouts IBC'],
     defaultQtyByDescription: {
       '275 Gal Rebottle IBC': 60,
-      '330 Gal Rebottle IBC': 78,
+      '330 Gal Rebottle IBC': 60,
       '135 Gal Rebottle IBC': 120,
       '275 Gal Washouts IBC': 60,
       '330 Gal Washouts IBC': 60,
@@ -237,7 +240,7 @@ export const VENDORS = [
     defaultDescriptions: ['275 Gal Rebottle IBC', '330 Gal Rebottle IBC', '135 Gal Rebottle IBC', '275 Gal Washouts IBC', '330 Gal Washouts IBC'],
     defaultQtyByDescription: {
       '275 Gal Rebottle IBC': 60,
-      '330 Gal Rebottle IBC': 78,
+      '330 Gal Rebottle IBC': 60,
       '135 Gal Rebottle IBC': 120,
       '275 Gal Washouts IBC': 60,
       '330 Gal Washouts IBC': 60,
@@ -260,7 +263,7 @@ export const VENDORS = [
     defaultDescriptions: ['275 Gal Rebottle IBC', '330 Gal Rebottle IBC', '135 Gal Rebottle IBC', '275 Gal Washouts IBC', '330 Gal Washouts IBC'],
     defaultQtyByDescription: {
       '275 Gal Rebottle IBC': 60,
-      '330 Gal Rebottle IBC': 78,
+      '330 Gal Rebottle IBC': 60,
       '135 Gal Rebottle IBC': 120,
       '275 Gal Washouts IBC': 60,
       '330 Gal Washouts IBC': 60,
@@ -282,7 +285,7 @@ export const VENDORS = [
     defaultDescriptions: ['275 Gal Rebottle IBC', '330 Gal Rebottle IBC', '135 Gal Rebottle IBC'],
     defaultQtyByDescription: {
       '275 Gal Rebottle IBC': 60,
-      '330 Gal Rebottle IBC': 78,
+      '330 Gal Rebottle IBC': 60,
       '135 Gal Rebottle IBC': 120,
     },
   },
@@ -301,7 +304,7 @@ export const VENDORS = [
     defaultDescriptions: ['275 Gal Rebottle IBC', '330 Gal Rebottle IBC', '135 Gal Rebottle IBC', '275 Gal Washouts IBC', '330 Gal Washouts IBC'],
     defaultQtyByDescription: {
       '275 Gal Rebottle IBC': 60,
-      '330 Gal Rebottle IBC': 78,
+      '330 Gal Rebottle IBC': 60,
       '135 Gal Rebottle IBC': 120,
       '275 Gal Washouts IBC': 60,
       '330 Gal Washouts IBC': 60,
@@ -322,7 +325,7 @@ export const VENDORS = [
     defaultDescriptions: ['275 Gal Rebottle IBC', '330 Gal Rebottle IBC', '135 Gal Rebottle IBC', '275 Gal Washouts IBC', '330 Gal Washouts IBC'],
     defaultQtyByDescription: {
       '275 Gal Rebottle IBC': 60,
-      '330 Gal Rebottle IBC': 78,
+      '330 Gal Rebottle IBC': 60,
       '135 Gal Rebottle IBC': 120,
       '275 Gal Washouts IBC': 60,
       '330 Gal Washouts IBC': 60,
@@ -528,6 +531,7 @@ export const CUSTOMERS = [
   'Nutrien Ag Solutions - WaKeeney, KS',
   'Nutrien Ag Solutions - Wall Lake, IA',
   'Nutrien Ag Solutions - West Liberty, IA',
+  'Nutrien Ag Solutions - Wharton, TX',
   'Nutrien Ag Solutions - Williston, ND',
   'Nutrien Ag Solutions - Winthrop, IA',
   'Oasis Chemicals',

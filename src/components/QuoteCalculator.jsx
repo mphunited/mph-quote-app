@@ -14,7 +14,7 @@ const EMPTY_FORM = {
   salesperson:        '',
   customer:           '',
   vendorId:           '',
-  coreLocation:       '',        // only for Core-IBCS
+  coreLocation:       '',        // only for Core-IBCS / Centurion
   ibcDescription:     '',
   ibcQty:             '',
   buyPrice:           '',
@@ -22,6 +22,7 @@ const EMPTY_FORM = {
   bottleCost:         '',
   bottleQty:          '',
   bottleFreightRate:  '',
+  bottleSellPrice:    '',        // bottles-only vendors (Alliance, Eco Green)
   originCity:         '',
   originState:        '',
   destCity:           '',
@@ -29,7 +30,7 @@ const EMPTY_FORM = {
   freightCarrier:     '',
   mphFreight:         '',
   customerFreight:    '0',
-  commission:         '0',
+  includeCommission:  false,     // checkbox: should commission be figured in?
   additionalCosts:    '0',
 }
 
@@ -99,12 +100,13 @@ export default function QuoteCalculator({ userProfile, activeTab, onTabChange })
 
     setForm(prev => ({
       ...prev,
-      buyPrice:          String(vendor.defaultBuyPrice),
+      buyPrice:          vendor.bottlesOnly ? '0' : String(vendor.defaultBuyPrice),
       bottleCost:        vendor.usesBottles ? String(vendor.defaultBottleCost)        : '0',
       bottleFreightRate: vendor.usesBottles ? String(vendor.defaultBottleFreightRate) : '0',
       bottleQty:         vendor.usesBottles ? (defaultQty || prev.bottleQty) : '0',
+      ibcQty:            vendor.bottlesOnly ? (defaultQty || prev.ibcQty) : (defaultQty || prev.ibcQty),
       ibcDescription:    defaultDesc,
-      ibcQty:            defaultQty,
+      bottleSellPrice:   vendor.bottlesOnly ? '' : prev.bottleSellPrice,
       originCity:        origin?.city  || '',
       originState:       origin?.state || '',
       mphFreight:        '',
@@ -112,7 +114,7 @@ export default function QuoteCalculator({ userProfile, activeTab, onTabChange })
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.vendorId])
 
-  // Update origin when Core-IBCS location changes
+  // Update origin when multi-location vendor changes
   useEffect(() => {
     if (!selectedVendor?.multipleLocations || !form.coreLocation) return
     const loc = selectedVendor.locations.find(l => `${l.city},${l.state}` === form.coreLocation)
@@ -122,21 +124,21 @@ export default function QuoteCalculator({ userProfile, activeTab, onTabChange })
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.coreLocation])
 
-  // Auto-update buy price and qty when description changes
+  // Auto-update buy price, qty, and bottleQty when description changes
   useEffect(() => {
     if (!selectedVendor || !form.ibcDescription) return
     const updates = {}
-    // Update buy price if vendor has per-description pricing
-    if (selectedVendor.buyPriceByDescription) {
+    // Update buy price if vendor has per-description pricing (non-bottlesOnly only)
+    if (!selectedVendor.bottlesOnly && selectedVendor.buyPriceByDescription) {
       const price = selectedVendor.buyPriceByDescription[form.ibcDescription]
       if (price !== undefined) updates.buyPrice = String(price)
     }
-    // Update ibcQty (and bottleQty for bottle vendors) if vendor has per-description qty defaults
+    // Update qty if vendor has per-description defaults
     if (selectedVendor.defaultQtyByDescription) {
       const qty = selectedVendor.defaultQtyByDescription[form.ibcDescription]
       if (qty !== undefined) {
-        updates.ibcQty = String(qty)
-        if (selectedVendor.usesBottles) updates.bottleQty = String(qty)
+        updates.ibcQty   = String(qty)
+        updates.bottleQty = String(qty)
       }
     }
     if (Object.keys(updates).length > 0) {
@@ -145,25 +147,24 @@ export default function QuoteCalculator({ userProfile, activeTab, onTabChange })
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.ibcDescription])
 
-  // Auto-calculate commission when ibcQty changes (for eligible users)
+  // For bottles-only vendors: keep ibcQty in sync with bottleQty
   useEffect(() => {
-    if (!showCommission) return
-    const qty = parseFloat(form.ibcQty) || 0
-    setForm(prev => ({ ...prev, commission: qty > 0 ? String(qty * 3) : '0' }))
+    if (!selectedVendor?.bottlesOnly) return
+    setForm(prev => ({ ...prev, ibcQty: prev.bottleQty }))
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [form.ibcQty, showCommission])
+  }, [form.bottleQty])
 
   function handleChange(e) {
-    const { name, value } = e.target
-    setForm(prev => ({ ...prev, [name]: value }))
+    const { name, value, type, checked } = e.target
+    setForm(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }))
   }
 
   function handleFreightSelect(quote) {
     setSelectedQuote(quote)
     setForm(prev => ({
       ...prev,
-      customerFreight: String(quote.quoteAmount), // freight cost MPH pays carrier → Column L (subtracted from profit)
-      mphFreight:      '0',                       // reset Column M (freight billed TO customer, usually $0)
+      customerFreight: String(quote.quoteAmount),
+      mphFreight:      '0',
       freightCarrier:  quote.carrier,
       destCity:        quote.destCity,
       destState:       quote.destState,
@@ -174,26 +175,32 @@ export default function QuoteCalculator({ userProfile, activeTab, onTabChange })
     setForm({ ...EMPTY_FORM, salesperson: userProfile?.displayName || '' })
     setSelectedVendor(null)
     setSelectedQuote(null)
-    setFreightKey(k => k + 1)   // remounts FreightLookup, clearing its internal state
+    setFreightKey(k => k + 1)
   }
 
-  // Build inputs object for the calculation engine
+  // Compute commission amount: ibcQty × $3, only when checkbox is checked
+  const commissionAmount = (showCommission && form.includeCommission)
+    ? String((parseFloat(form.ibcQty) || 0) * 3)
+    : '0'
+
+  // Build inputs for calculation engine
   const calcInputs = {
-    bottleCost:         form.bottleCost,
-    bottleQty:          form.bottleQty,
-    bottleFreightRate:  form.bottleFreightRate,
-    ibcQty:             form.ibcQty,
-    buyPrice:           form.buyPrice,
-    sellPrice:          form.sellPrice,
-    customerFreight:    form.customerFreight,
-    mphFreight:         form.mphFreight,
-    commission:         showCommission ? form.commission : '0',
-    additionalCosts:    form.additionalCosts,
+    bottleCost:        form.bottleCost,
+    bottleQty:         form.bottleQty,
+    bottleFreightRate: form.bottleFreightRate,
+    ibcQty:            form.ibcQty,
+    buyPrice:          selectedVendor?.bottlesOnly ? '0' : form.buyPrice,
+    sellPrice:         selectedVendor?.bottlesOnly ? form.bottleSellPrice : form.sellPrice,
+    customerFreight:   form.customerFreight,
+    mphFreight:        form.mphFreight,
+    commission:        commissionAmount,
+    additionalCosts:   form.additionalCosts,
   }
   const result = calculateQuote(calcInputs)
 
   const vendorName   = selectedVendor?.name || ''
   const customerName = form.customer
+  const isBottlesOnly = !!selectedVendor?.bottlesOnly
 
   return (
     <div className="min-h-screen bg-mph-gray">
@@ -299,7 +306,7 @@ export default function QuoteCalculator({ userProfile, activeTab, onTabChange })
                 </select>
               </div>
 
-              {/* Core-IBCS location picker */}
+              {/* Multi-location picker (Core-IBCS, Centurion) */}
               {selectedVendor?.multipleLocations && (
                 <div>
                   <label className="field-label">{selectedVendor.name} Location<span className="text-red-400 ml-0.5">*</span></label>
@@ -314,32 +321,80 @@ export default function QuoteCalculator({ userProfile, activeTab, onTabChange })
                 </div>
               )}
 
-              <div>
-                <label className="field-label">IBC Product Description<span className="text-red-400 ml-0.5">*</span></label>
-                <select name="ibcDescription" className="field-input" value={form.ibcDescription} onChange={handleChange}>
-                  <option value="">— Select Product —</option>
-                  {(selectedVendor?.defaultDescriptions || IBC_DESCRIPTIONS).map(d =>
-                    <option key={d} value={d}>{d}</option>
-                  )}
-                  {selectedVendor && IBC_DESCRIPTIONS
-                    .filter(d => !selectedVendor.defaultDescriptions?.includes(d))
-                    .map(d => <option key={d} value={d}>{d}</option>)}
-                </select>
-              </div>
+              {/* Bottles-only vendors: show Bottle Type only */}
+              {isBottlesOnly ? (
+                <div>
+                  <label className="field-label">Bottle Type<span className="text-red-400 ml-0.5">*</span></label>
+                  <select name="ibcDescription" className="field-input" value={form.ibcDescription} onChange={handleChange}>
+                    <option value="">— Select Bottle Type —</option>
+                    {(selectedVendor?.defaultDescriptions || []).map(d =>
+                      <option key={d} value={d}>{d}</option>
+                    )}
+                  </select>
+                </div>
+              ) : (
+                /* Standard vendors: full IBC product + qty + buy + sell */
+                <>
+                  <div>
+                    <label className="field-label">IBC Product Description<span className="text-red-400 ml-0.5">*</span></label>
+                    <select name="ibcDescription" className="field-input" value={form.ibcDescription} onChange={handleChange}>
+                      <option value="">— Select Product —</option>
+                      {(selectedVendor?.defaultDescriptions || IBC_DESCRIPTIONS).map(d =>
+                        <option key={d} value={d}>{d}</option>
+                      )}
+                      {selectedVendor && IBC_DESCRIPTIONS
+                        .filter(d => !selectedVendor.defaultDescriptions?.includes(d))
+                        .map(d => <option key={d} value={d}>{d}</option>)}
+                    </select>
+                  </div>
+                  <NumberField label="IBC Quantity"       name="ibcQty"    value={form.ibcQty}    onChange={handleChange} required placeholder="e.g. 60" />
+                  <NumberField label="Buy Price / Unit"   name="buyPrice"  value={form.buyPrice}  onChange={handleChange} required hint="from vendor" isCost />
+                  <NumberField label="Sell Price / Unit"  name="sellPrice" value={form.sellPrice} onChange={handleChange} required hint="quoted to customer" />
+                </>
+              )}
 
-              <NumberField label="IBC Quantity" name="ibcQty"        value={form.ibcQty}    onChange={handleChange} required placeholder="e.g. 60" />
-              <NumberField label="Buy Price / Unit"  name="buyPrice"  value={form.buyPrice}  onChange={handleChange} required hint="from vendor" isCost />
-              <NumberField label="Sell Price / Unit" name="sellPrice" value={form.sellPrice} onChange={handleChange} required hint="quoted to customer" />
+              {/* Commission checkbox — only visible to eligible users */}
+              {showCommission && (
+                <div className="sm:col-span-2 flex items-center gap-3 pt-1 pb-0.5">
+                  <input
+                    type="checkbox"
+                    id="includeCommission"
+                    name="includeCommission"
+                    checked={form.includeCommission}
+                    onChange={handleChange}
+                    className="w-4 h-4 accent-mph-navy cursor-pointer"
+                  />
+                  <label htmlFor="includeCommission" className="text-sm font-medium text-mph-navy cursor-pointer select-none">
+                    Should Commission be figured into this order?
+                    {form.includeCommission && form.ibcQty && (
+                      <span className="ml-2 text-xs text-red-600 font-normal">
+                        ({parseFloat(form.ibcQty) || 0} × $3 = ${((parseFloat(form.ibcQty) || 0) * 3).toFixed(2)})
+                      </span>
+                    )}
+                  </label>
+                </div>
+              )}
             </div>
           </Section>
 
-          {/* C: Bottle Costs (hidden if vendor doesn't use bottles) */}
+          {/* C: Bottle Costs — shown for all usesBottles vendors (including bottlesOnly) */}
           {selectedVendor?.usesBottles && (
             <Section title="C · Bottle Costs">
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <NumberField label="Bottle Cost / Unit" name="bottleCost"         value={form.bottleCost}        onChange={handleChange} hint="pre-filled" isCost />
-                <NumberField label="Bottle Quantity"    name="bottleQty"          value={form.bottleQty}         onChange={handleChange} />
-                <NumberField label="MPH Freight Rate Bottles" name="bottleFreightRate" value={form.bottleFreightRate} onChange={handleChange} hint="total rate ÷ 90 per unit" isCost />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <NumberField label="Bottle Cost / Unit"          name="bottleCost"         value={form.bottleCost}        onChange={handleChange} hint="pre-filled" isCost />
+                <NumberField label="Bottle Quantity"             name="bottleQty"          value={form.bottleQty}         onChange={handleChange} />
+                <NumberField label="MPH Freight Rate – Bottles"  name="bottleFreightRate"  value={form.bottleFreightRate} onChange={handleChange} hint="total rate ÷ 90 per unit" isCost />
+                {/* Sell price shown here only for bottles-only vendors */}
+                {isBottlesOnly && (
+                  <NumberField
+                    label="Sell Price / Bottle"
+                    name="bottleSellPrice"
+                    value={form.bottleSellPrice}
+                    onChange={handleChange}
+                    required
+                    hint="quoted to customer"
+                  />
+                )}
               </div>
             </Section>
           )}
@@ -372,23 +427,10 @@ export default function QuoteCalculator({ userProfile, activeTab, onTabChange })
             </div>
           </Section>
 
-          {/* E: Additional Costs & Commission */}
+          {/* E: Additional Costs */}
           <Section title="E · Additional Costs">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <NumberField label="Additional Costs" name="additionalCosts" value={form.additionalCosts} onChange={handleChange} isCost />
-              {showCommission && (
-                <div>
-                  <NumberField
-                    label="Commission"
-                    name="commission"
-                    value={form.commission}
-                    onChange={handleChange}
-                    hint="auto: qty × $3"
-                    isCost
-                  />
-                  <p className="text-xs text-gray-400 mt-1">Auto-calculated as IBC Qty × $3. You may override.</p>
-                </div>
-              )}
             </div>
           </Section>
 
