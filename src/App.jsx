@@ -6,6 +6,7 @@ import { getUserProfile } from './graphService'
 import LoginPage from './components/LoginPage'
 import QuoteCalculator from './components/QuoteCalculator'
 import QuoteBuilder from './components/QuoteBuilder'
+import OrderForm from './components/OrderForm'
 
 export default function App() {
   const { instance, accounts, inProgress } = useMsal()
@@ -82,6 +83,16 @@ export default function App() {
   if (activeTab === 'quote') {
     return (
       <QuoteBuilder
+        userProfile={userProfile}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+      />
+    )
+  }
+
+  if (activeTab === 'order') {
+    return (
+      <OrderForm
         userProfile={userProfile}
         activeTab={activeTab}
         onTabChange={setActiveTab}

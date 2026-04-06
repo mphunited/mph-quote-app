@@ -455,6 +455,16 @@ export default function QuoteBuilder({ userProfile, activeTab, onTabChange }) {
             >
               📄 Create a Customer Quote
             </button>
+            <button
+              onClick={() => onTabChange('order')}
+              className={`px-5 py-2.5 rounded text-sm font-bold transition-colors ${
+                activeTab === 'order'
+                  ? 'bg-mph-amber text-mph-navy'
+                  : 'bg-blue-500 text-white hover:bg-blue-400'
+              }`}
+            >
+              📋 Order Form for New Customers
+            </button>
           </div>
         </div>
         <div className="text-sm text-blue-200 text-right">
