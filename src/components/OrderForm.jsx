@@ -192,8 +192,8 @@ export default function OrderForm({ userProfile, activeTab, onTabChange }) {
       })
 
       const salespersonEmail = userProfile?.mail || userProfile?.userPrincipalName
-      const recipients = ['orders@mphunited.com']
-      if (salespersonEmail && salespersonEmail !== 'orders@mphunited.com') {
+      const recipients = []
+      if (salespersonEmail) {
         recipients.push(salespersonEmail)
       }
 
@@ -256,19 +256,11 @@ export default function OrderForm({ userProfile, activeTab, onTabChange }) {
       <div className="max-w-4xl mx-auto px-4 py-8">
 
         {/* Header */}
-        <div className="flex items-center gap-4 mb-6">
-          <img
-            src="/IBCs_Drum.png"
-            alt="IBCs and Drum"
-            className="h-16 object-contain rounded"
-          />
-          <div>
-            <h1 className="text-2xl font-bold text-mph-navy">Order Form for New Customers</h1>
-            <p className="text-sm text-gray-500 mt-0.5">
-              Fill in the order details below and click <strong>Send Order</strong>. The form will be
-              emailed to <strong>orders@mphunited.com</strong> and to you.
-            </p>
-          </div>
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold text-mph-navy">Order Form for New Customers</h1>
+          <p className="text-sm text-gray-500 mt-0.5">
+            Fill in the order details below and click <strong>Send Order</strong>. The completed form will be emailed to you.
+          </p>
         </div>
 
         {/* Success message */}
@@ -277,7 +269,7 @@ export default function OrderForm({ userProfile, activeTab, onTabChange }) {
             <div>
               <p className="text-green-800 font-semibold">✅ Order sent successfully!</p>
               <p className="text-green-700 text-sm mt-0.5">
-                A copy was emailed to <strong>orders@mphunited.com</strong> and to you.
+                A copy was emailed to you.
               </p>
             </div>
             <button
