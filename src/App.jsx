@@ -7,6 +7,7 @@ import LoginPage from './components/LoginPage'
 import QuoteCalculator from './components/QuoteCalculator'
 import QuoteBuilder from './components/QuoteBuilder'
 import OrderForm from './components/OrderForm'
+import IBCSpecForm from './components/IBCSpecForm'
 
 export default function App() {
   const { instance, accounts, inProgress } = useMsal()
@@ -93,6 +94,16 @@ export default function App() {
   if (activeTab === 'order') {
     return (
       <OrderForm
+        userProfile={userProfile}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+      />
+    )
+  }
+
+  if (activeTab === 'ibcspec') {
+    return (
+      <IBCSpecForm
         userProfile={userProfile}
         activeTab={activeTab}
         onTabChange={setActiveTab}

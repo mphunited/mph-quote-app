@@ -309,6 +309,7 @@ export default function OrderForm({ userProfile, activeTab, onTabChange }) {
             {tabBtn('calculator', 'Sales Margins Calculator', '📊')}
             {tabBtn('quote',      'Create a Customer Quote',  '📄')}
             {tabBtn('order',      'Order Form for New Customers', '📋')}
+            {tabBtn('ibcspec',    'IBC Spec Order Form',          '🔧')}
           </div>
         </div>
         <div className="text-sm text-blue-200 text-right">

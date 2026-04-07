@@ -465,6 +465,16 @@ export default function QuoteBuilder({ userProfile, activeTab, onTabChange }) {
             >
               📋 Order Form for New Customers
             </button>
+            <button
+              onClick={() => onTabChange('ibcspec')}
+              className={`px-5 py-2.5 rounded text-sm font-bold transition-colors ${
+                activeTab === 'ibcspec'
+                  ? 'bg-mph-amber text-mph-navy'
+                  : 'bg-blue-500 text-white hover:bg-blue-400'
+              }`}
+            >
+              🔧 IBC Spec Order Form
+            </button>
           </div>
         </div>
         <div className="text-sm text-blue-200 text-right">
