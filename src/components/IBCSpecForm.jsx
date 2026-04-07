@@ -33,21 +33,19 @@ const VALVE_OPTIONS  = [
 ]
 
 // ─── Conditional Valve Gasket map ────────────────────────────────────────────
-// Ball valve (BV) types always use EPDM; Butterfly (BF) types use EPDM.
-// "ANY" valves allow EPDM or ANY. Add/expand these as needed.
 const VALVE_GASKET_MAP = {
-  'BV-AG QD':                  ['EPDM'],
-  'BV QD':                     ['EPDM'],
-  'BV NPT':                    ['EPDM'],
-  'BV BUTTRESS':                ['EPDM'],
-  'BVP QD (GJL-PLASTIC COLLAR)': ['EPDM'],
-  'BVP QD (Stainlez)':          ['EPDM'],
-  'BF QD':                     ['EPDM'],
-  'BF-GR QD':                  ['EPDM'],
-  'BF NPT':                    ['EPDM'],
-  'ANY':                       ['EPDM', 'ANY'],
-  'ANY QD':                    ['EPDM', 'ANY'],
-  'ANY NPT':                   ['EPDM', 'ANY'],
+  'BV-AG QD':                    ['VITON', 'PE', 'ANY'],
+  'BV QD':                       ['VITON', 'EPDM', 'PE', 'ANY'],
+  'BV NPT':                      ['VITON', 'EPDM', 'PE', 'ANY'],
+  'BV BUTTRESS':                  ['EPDM', 'ANY'],
+  'BVP QD (GJL-PLASTIC COLLAR)': ['VITON', 'ANY'],
+  'BVP QD (Stainlez)':           ['PE', 'ANY'],
+  'BF QD':                       ['PE', 'ANY'],
+  'BF-GR QD':                    ['PE', 'ANY'],
+  'BF NPT':                      ['PE', 'ANY'],
+  'ANY':                         ['VITON', 'EPDM', 'ANY'],
+  'ANY QD':                      ['ANY'],
+  'ANY NPT':                     ['ANY'],
 }
 
 const LID_GASKET_OPTIONS = [
