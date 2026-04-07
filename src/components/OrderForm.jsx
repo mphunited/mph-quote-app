@@ -197,6 +197,8 @@ export default function OrderForm({ userProfile, activeTab, onTabChange }) {
   const [sending, setSending]     = useState(false)
   const [sent, setSent]           = useState(false)
   const [sendError, setSendError] = useState(null)
+  const [showSendModal, setShowSendModal] = useState(false)
+  const [extraEmail, setExtraEmail]       = useState('')
 
   function field(key) {
     return {
@@ -231,12 +233,18 @@ export default function OrderForm({ userProfile, activeTab, onTabChange }) {
 
   // ── Send ─────────────────────────────────────────────────────────────────
 
-  async function handleSend() {
+  function handleOpenSendModal() {
     if (!form.customerName.trim()) {
       setSendError('Customer Name is required.')
       return
     }
     setSendError(null)
+    setExtraEmail('')
+    setShowSendModal(true)
+  }
+
+  async function handleConfirmSend() {
+    setShowSendModal(false)
     setSending(true)
     try {
       const tokenResponse = await instance.acquireTokenSilent({
@@ -247,6 +255,7 @@ export default function OrderForm({ userProfile, activeTab, onTabChange }) {
       const salespersonEmail = userProfile?.mail || userProfile?.userPrincipalName
       const recipients = []
       if (salespersonEmail) recipients.push(salespersonEmail)
+      if (extraEmail.trim()) recipients.push(extraEmail.trim())
 
       const subject = `New Customer Order – ${form.customerName || 'Unknown Customer'}`
       const html = buildEmailHtml(form, userProfile?.displayName || salespersonEmail)
@@ -255,6 +264,7 @@ export default function OrderForm({ userProfile, activeTab, onTabChange }) {
 
       setSent(true)
       setForm(EMPTY)
+      setExtraEmail('')
     } catch (err) {
       console.error('Order email failed:', err)
       setSendError('Failed to send order. Please try again or contact IT.')
@@ -474,7 +484,7 @@ export default function OrderForm({ userProfile, activeTab, onTabChange }) {
             Clear Form
           </button>
           <button
-            onClick={handleSend}
+            onClick={handleOpenSendModal}
             disabled={sending}
             className="px-8 py-3 bg-mph-navy text-white rounded-lg text-sm font-bold hover:bg-blue-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
           >
@@ -493,6 +503,61 @@ export default function OrderForm({ userProfile, activeTab, onTabChange }) {
           MPH United · PO Box 1270 · Fairhope, AL 36532
         </p>
       </div>
+
+      {/* ── Send Confirmation Modal ── */}
+      {showSendModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md mx-4 overflow-hidden">
+            {/* Modal header */}
+            <div className="bg-mph-navy px-6 py-4">
+              <h2 className="text-white font-bold text-base">Send Order</h2>
+              <p className="text-blue-200 text-xs mt-0.5">
+                Order for <span className="font-semibold text-mph-amber">{form.customerName}</span>
+              </p>
+            </div>
+
+            {/* Modal body */}
+            <div className="px-6 py-5 space-y-4">
+              <p className="text-sm text-gray-600">
+                The order will be emailed to <span className="font-semibold text-mph-navy">{userProfile?.mail || userProfile?.userPrincipalName}</span>.
+              </p>
+
+              <div>
+                <label className="block text-xs font-bold text-mph-navy uppercase tracking-wider mb-1">
+                  Additional Email <span className="text-gray-400 font-normal normal-case">(optional)</span>
+                </label>
+                <input
+                  type="email"
+                  className="field-input"
+                  value={extraEmail}
+                  onChange={e => setExtraEmail(e.target.value)}
+                  placeholder="someone@example.com"
+                  autoFocus
+                />
+                <p className="text-xs text-gray-400 mt-1">
+                  Leave blank to send only to yourself.
+                </p>
+              </div>
+            </div>
+
+            {/* Modal footer */}
+            <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end gap-3">
+              <button
+                onClick={() => setShowSendModal(false)}
+                className="px-5 py-2 border border-gray-300 rounded-lg text-sm font-semibold text-gray-600 hover:bg-gray-100 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirmSend}
+                className="px-6 py-2 bg-mph-navy text-white rounded-lg text-sm font-bold hover:bg-blue-900 transition-colors flex items-center gap-2"
+              >
+                📧 Send Order
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
