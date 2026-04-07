@@ -531,7 +531,7 @@ export default function OrderForm({ userProfile, activeTab, onTabChange }) {
                   className="field-input"
                   value={extraEmail}
                   onChange={e => setExtraEmail(e.target.value)}
-                  placeholder="someone@example.com"
+                  placeholder="orders@mphunited.com"
                   autoFocus
                 />
                 <p className="text-xs text-gray-400 mt-1">
