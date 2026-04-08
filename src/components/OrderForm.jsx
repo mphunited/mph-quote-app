@@ -6,6 +6,40 @@ import { sendQuoteEmail } from '../graphService'
 const MAX_IBC_ROWS = 7
 const EMPTY_IBC_ROW = { qty: '', spec: '' }
 
+// ── Vendor list with CSR info ────────────────────────────────────────────────
+
+const VENDOR_ORDER_LIST = [
+  { name: 'MPH United / Core – Houston, TX',                              csr: 'Christina Bayne' },
+  { name: 'MPH United / Core – Nashua, IA',                               csr: 'Mainly Keith Ferrell (Christina Bayne depending on customer)' },
+  { name: 'MPH United / Core – Shreveport, LA',                           csr: 'Christina Bayne' },
+  { name: 'MPH United / Core – South Holland, IL',                        csr: 'Mainly Keith Ferrell (Christina Bayne depending on customer)' },
+  { name: 'MPH United / Core – Waterloo, IA',                             csr: 'Mainly Keith Ferrell (Christina Bayne depending on customer)' },
+  { name: 'MPH United / Core – Calhoun, GA',                              csr: 'Keith Ferrell' },
+  { name: 'MPH United / Alliance Container – Greenwood, IN',              csr: 'Jordan Mannering' },
+  { name: 'MPH United / Alliance Container Texas – Hillsboro, TX',        csr: 'Christina Bayne' },
+  { name: 'MPH United / Eco Green – Houston, TX',                         csr: 'Christina Bayne' },
+  { name: 'MPH United / Advatech Industries – Houston, TX',               csr: 'Christina Bayne' },
+  { name: 'MPH United – 5 Star Industrial Containers – Bristow, OK',      csr: 'Keith Ferrell' },
+  { name: 'MPH United – SEC (SouthEast Container) – Cleveland, MS',       csr: 'Christina Bayne' },
+  { name: 'MPH United – GPC (Great Plains Container) – Garden City, KS',  csr: 'Keith Ferrell' },
+  { name: 'MPH United – STS (Superior Tote Solutions) – Greenwood, IN',   csr: 'Suzanne Ridenour' },
+  { name: 'MPH United – United Container Group – Hillsboro, TX',          csr: 'Christina Bayne' },
+  { name: 'MPH United – TTW (Texas Tote Works) – Odessa, TX',             csr: 'Keith Ferrell' },
+  { name: 'MPH United – TLD (Ted Levine Drum Co) – South El Monte, CA',   csr: 'Keith Ferrell' },
+  { name: 'MPH United – RRG (Rural Recycling & Grinding) – Stanwood, IA', csr: 'Jordan Mannering' },
+  { name: 'MPH United Clean Environmental – St. Louis, MO',               csr: 'Christina Bayne' },
+  { name: 'MPH United – STS (Superior Tote Solutions) – Summitville, IN', csr: 'Suzanne Ridenour' },
+  { name: 'MPH United – Centurion – Lewisburg, TN',                       csr: '' },
+  { name: 'MPH United – Centurion – Memphis, TN',                         csr: '' },
+]
+
+const CSR_OPTIONS = [
+  { label: 'Christina', fullName: 'Christina Bayne' },
+  { label: 'Jordan',    fullName: 'Jordan Mannering' },
+  { label: 'Keith',     fullName: 'Keith Ferrell' },
+  { label: 'Suzanne',   fullName: 'Suzanne Ridenour' },
+]
+
 // ── Small reusable field components ─────────────────────────────────────────
 
 function FieldLabel({ children, required }) {
@@ -66,6 +100,7 @@ function Section({ title, children, fullGrid = false }) {
 const EMPTY = {
   customerName:          '',
   vendorName:            '',
+  selectedCsr:           '',
   ibcRows:               [{ qty: '', spec: '' }],
   emptiesBack:           '',
   specialNotes:          '',
@@ -97,7 +132,7 @@ const EMPTY = {
 
 // ── Email HTML builder ───────────────────────────────────────────────────────
 
-function buildEmailHtml(form, senderName) {
+function buildEmailHtml(form, senderName, csrFirstName) {
   const row = (label, value) =>
     value
       ? `<tr>
@@ -142,6 +177,10 @@ function buildEmailHtml(form, senderName) {
       <div style="background:#DCB41E;padding:6px 24px">
         <span style="color:#002850;font-size:12px;font-weight:700">Submitted by: ${senderName}</span>
       </div>
+      ${csrFirstName ? `
+      <div style="background:#f0f4ff;border-left:4px solid #002850;padding:14px 24px;font-size:15px;font-weight:700;color:#002850">
+        ${csrFirstName} please process this new customer.
+      </div>` : ''}
       <table style="width:100%;background:#ffffff;border-collapse:collapse;border-radius:0 0 8px 8px;overflow:hidden">
         ${sectionHeader('Order Details')}
         ${row('Customer Name', form.customerName)}
@@ -258,7 +297,7 @@ export default function OrderForm({ userProfile, activeTab, onTabChange }) {
       if (extraEmail.trim()) recipients.push(extraEmail.trim())
 
       const subject = `New Customer Order – ${form.customerName || 'Unknown Customer'}`
-      const html = buildEmailHtml(form, userProfile?.displayName || salespersonEmail)
+      const html = buildEmailHtml(form, userProfile?.displayName || salespersonEmail, form.selectedCsr)
 
       await sendQuoteEmail(tokenResponse.accessToken, recipients, subject, html)
 
@@ -358,7 +397,48 @@ export default function OrderForm({ userProfile, activeTab, onTabChange }) {
           <Section title="Order Details" fullGrid>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <TextInput label="Customer Name" required {...field('customerName')} placeholder="Customer company name" />
-              <TextInput label="Vendor Name" {...field('vendorName')} placeholder="e.g. RRG, Clean Environmental" />
+
+              {/* Vendor Name dropdown */}
+              <div>
+                <FieldLabel>Vendor Name</FieldLabel>
+                <select
+                  className="field-input"
+                  value={form.vendorName}
+                  onChange={e => setForm(prev => ({ ...prev, vendorName: e.target.value }))}
+                >
+                  <option value="">— Select Vendor —</option>
+                  {VENDOR_ORDER_LIST.map(v => (
+                    <option key={v.name} value={v.name}>{v.name}</option>
+                  ))}
+                </select>
+                {/* Auto-populate CSR info below the dropdown */}
+                {(() => {
+                  const match = VENDOR_ORDER_LIST.find(v => v.name === form.vendorName)
+                  if (!match) return null
+                  return (
+                    <p className="mt-1.5 text-xs rounded px-2.5 py-1.5 border border-blue-100 bg-blue-50 text-mph-navy">
+                      <span className="font-bold">CSR:</span>{' '}
+                      {match.csr || <span className="italic text-gray-400">TBD</span>}
+                    </p>
+                  )
+                })()}
+              </div>
+
+              {/* Choose CSR dropdown */}
+              <div>
+                <FieldLabel>Choose CSR</FieldLabel>
+                <select
+                  className="field-input"
+                  value={form.selectedCsr}
+                  onChange={e => setForm(prev => ({ ...prev, selectedCsr: e.target.value }))}
+                >
+                  <option value="">— Select CSR —</option>
+                  {CSR_OPTIONS.map(c => (
+                    <option key={c.label} value={c.label}>{c.label}</option>
+                  ))}
+                </select>
+              </div>
+
               <SelectInput label="Empties Coming Back" {...field('emptiesBack')} options={['Yes', 'No']} />
               <SelectInput label="Delivered Price" {...field('deliveredPrice')} options={['Yes', 'No']} />
               <TextInput label="Customer PO(s)" {...field('customerPO')} placeholder="PO number(s)" />
